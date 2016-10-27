@@ -1,4 +1,16 @@
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableView?>
 <GridPane fx:controller="ViewModels.TableViewModel"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+          xmlns:fx="http://javafx.com/fxml">
+    <children>
+        <StackPane GridPane.rowIndex="0" alignment="TOP_LEFT" style="-fx-padding: 10 5;">
+            <Button text="Refresh"/>
+        </StackPane>
+
+        <TableView fx:id="tableView" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
+    </children>
 </GridPane>

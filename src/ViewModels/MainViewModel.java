@@ -1,25 +1,54 @@
 package ViewModels;
 
+import DbWcfServiceReference.DbWcfService;
+import DbWcfServiceReference.DbWcfServiceLocator;
+import DbWcfServiceReference.IDbWcfService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 
-public class MainViewModel
+import java.io.Console;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class MainViewModel implements Initializable
 {
     private final ObservableList<String> _dbNames;
+    private final IDbWcfService _dbService;
 
     public ListView dbNamesListView;
 
-    public MainViewModel()
+    public MainViewModel(IDbWcfService dbService)
     {
-        this._dbNames = FXCollections.observableArrayList(
-                "Single", "Double", "Suite", "Family App");
+        this._dbService = dbService;
+
+        this._dbNames = FXCollections.observableArrayList();
     }
 
-    @FXML
-    private void initialize()
+    @Override
+    public void initialize(URL location, ResourceBundle resources)
     {
         dbNamesListView.setItems(this._dbNames);
+    }
+
+    public void refresh(ActionEvent actionEvent)
+    {
+        this._dbNames.clear();
+
+        DbWcfServiceLocator dbServiceLocator = new DbWcfServiceLocator();
+
+        try
+        {
+            IDbWcfService dbService = dbServiceLocator.getBasicHttpBinding_IDbWcfService();
+            String[] dbNames = dbService.getDatabasesNames();
+
+            this._dbNames.addAll(dbNames);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
     }
 }

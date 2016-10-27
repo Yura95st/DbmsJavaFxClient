@@ -1,16 +1,21 @@
 package ViewModels;
 
-import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TableView;
 
-public class TableViewModel
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class TableViewModel implements Initializable
 {
+    public TableView tableView;
 
     public TableViewModel()
     {
     }
 
-    @FXML
-    private void initialize()
+    @Override
+    public void initialize(URL location, ResourceBundle resources)
     {
     }
 }

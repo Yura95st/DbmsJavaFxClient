@@ -1,16 +1,20 @@
 package ViewModels;
 
-import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 
-public class DbViewModel
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class DbViewModel implements Initializable
 {
 
     public DbViewModel()
     {
     }
 
-    @FXML
-    private void initialize()
+    @Override
+    public void initialize(URL location, ResourceBundle resources)
     {
+
     }
 }
