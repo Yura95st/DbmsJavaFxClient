@@ -3,15 +3,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.Button?>
-<GridPane fx:controller="ViewModels.DbViewModel"
-          xmlns:fx="http://javafx.com/fxml">
+<GridPane xmlns:fx="http://javafx.com/fxml">
     <children>
         <StackPane GridPane.rowIndex="0" alignment="TOP_LEFT" style="-fx-padding: 10 5;">
-            <Button text="Refresh"/>
+            <Button text="Refresh" onAction="#refresh"/>
         </StackPane>
 
         <Label text="Tables:" GridPane.rowIndex="1" style="-fx-padding: 0 0 10 5;"/>
 
-        <ListView fx:id="tablesNamesListView" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
+        <ListView fx:id="tablesNamesListView" onMouseClicked="#onMouseClicked" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
     </children>
 </GridPane>

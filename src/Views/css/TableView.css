@@ -1,0 +1,7 @@
+#topStackPane{
+    -fx-padding: 10 5;
+}
+
+#tableView .table-column {
+    -fx-alignment: CENTER;
+}

@@ -1,21 +1,27 @@
+import DbWcfServiceReference.DbWcfService;
+import DbWcfServiceReference.DbWcfServiceLocator;
+import DbWcfServiceReference.IDbWcfService;
+import Utils.StageUtils;
+import ViewModels.MainViewModel;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
-
+public class Main extends Application
+{
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("Views/MainView.fxml"));
-        primaryStage.setTitle("DbmsJavaFxClient");
-        primaryStage.setScene(new Scene(root, 960, 480));
-        primaryStage.show();
+    public void start(Stage primaryStage) throws Exception
+    {
+        DbWcfService dbServiceLocator = new DbWcfServiceLocator();
+        IDbWcfService dbService = dbServiceLocator.getBasicHttpBinding_IDbWcfService();
+
+        MainViewModel viewModel = new MainViewModel(dbService);
+
+        StageUtils.openNewStage("DbmsJavaFxClient", viewModel, getClass().getResource("Views/MainView.fxml"), null);
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         launch(args);
     }
 }

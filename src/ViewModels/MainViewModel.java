@@ -1,16 +1,20 @@
 package ViewModels;
 
-import DbWcfServiceReference.DbWcfService;
-import DbWcfServiceReference.DbWcfServiceLocator;
 import DbWcfServiceReference.IDbWcfService;
+import Utils.StageUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
-import java.io.Console;
 import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainViewModel implements Initializable
@@ -31,24 +35,64 @@ public class MainViewModel implements Initializable
     public void initialize(URL location, ResourceBundle resources)
     {
         dbNamesListView.setItems(this._dbNames);
+
+        this.refresh();
     }
 
     public void refresh(ActionEvent actionEvent)
     {
+        this.refresh();
+    }
+
+    private void refresh()
+    {
         this._dbNames.clear();
 
-        DbWcfServiceLocator dbServiceLocator = new DbWcfServiceLocator();
+        List<String> dbNamesList = this.getDbNamesList();
+        if (dbNamesList == null)
+        {
+            System.out.println("Error while getting databases names.");
+            return;
+        }
 
+        this._dbNames.addAll(dbNamesList);
+    }
+
+    private List<String> getDbNamesList()
+    {
+        List<String> dbNames = null;
         try
         {
-            IDbWcfService dbService = dbServiceLocator.getBasicHttpBinding_IDbWcfService();
-            String[] dbNames = dbService.getDatabasesNames();
-
-            this._dbNames.addAll(dbNames);
+            dbNames = Arrays.asList(this._dbService.getDatabasesNames());
         }
-        catch (Exception e)
+        catch (RemoteException e)
         {
-            System.out.println(e);
+            e.printStackTrace();
         }
+        finally
+        {
+            return dbNames;
+        }
+    }
+
+    public void onMouseClicked(MouseEvent mouseEvent)
+    {
+        if (mouseEvent.getClickCount() == 2 && mouseEvent.getButton() == MouseButton.PRIMARY)
+        {
+            String dbName = (String) dbNamesListView.getSelectionModel().getSelectedItem();
+            if (dbName != null)
+            {
+                this.openDbWindow(dbName);
+            }
+        }
+    }
+
+    private void openDbWindow(String dbName)
+    {
+        DbViewModel viewModel = new DbViewModel(dbName, this._dbService);
+        Stage currentStage = (Stage) dbNamesListView.getScene().getWindow();
+
+        StageUtils.openNewStage(String.format("Database: %s", dbName), viewModel,
+                getClass().getClassLoader().getResource("Views/DbView.fxml"), currentStage);
     }
 }
