@@ -11,7 +11,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -70,7 +69,7 @@ public class DbViewModel implements Initializable
         DatabaseDto database = this.getDatabase();
         if (database == null)
         {
-            System.out.println("Error while getting database.");
+            StageUtils.openErrorDialog("Error occurred while getting database.");
             return;
         }
 
@@ -94,7 +93,7 @@ public class DbViewModel implements Initializable
         TableViewModel viewModel = new TableViewModel(this._dbName, tableName, this._dbService);
         Stage currentStage = (Stage) tablesNamesListView.getScene().getWindow();
 
-        StageUtils.openNewStage(String.format("Database: %s", tableName), viewModel,
+        StageUtils.openNewStage(String.format("Table: %s", tableName), viewModel,
                 getClass().getClassLoader().getResource("Views/TableView.fxml"), currentStage);
     }
 }

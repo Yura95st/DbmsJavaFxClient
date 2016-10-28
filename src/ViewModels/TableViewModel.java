@@ -4,15 +4,19 @@ import DbWcfServiceReference.Attribute;
 import DbWcfServiceReference.IDbWcfService;
 import DbWcfServiceReference.Row;
 import DbWcfServiceReference.TableDto;
+import Utils.StageUtils;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.controlsfx.control.CheckComboBox;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class TableViewModel implements Initializable
@@ -22,6 +26,7 @@ public class TableViewModel implements Initializable
     private final IDbWcfService _dbService;
 
     public TableView tableView;
+    public CheckComboBox<String> checkComboBox;
 
     public TableViewModel(String dbName, String tableName, IDbWcfService dbService)
     {
@@ -36,6 +41,24 @@ public class TableViewModel implements Initializable
         try
         {
             table = this._dbService.getTable(this._dbName, this._tableName);
+        }
+        catch (RemoteException ex)
+        {
+            System.out.println(ex);
+        }
+        finally
+        {
+            return table;
+        }
+    }
+
+    private TableDto getTableProjection(List<String> attributes)
+    {
+        TableDto table = null;
+        try
+        {
+            table = this._dbService
+                    .getTableProjection(this._dbName, this._tableName, attributes.toArray(new String[0]));
         }
         catch (RemoteException ex)
         {
@@ -64,7 +87,18 @@ public class TableViewModel implements Initializable
             tableView.getColumns().add(column);
         }
 
-        tableView.setItems(FXCollections.observableArrayList(table.getRows()));
+        tableView.getItems().addAll(table.getRows());
+    }
+
+    private void updateCheckComboBox(TableDto table)
+    {
+        this.checkComboBox.getCheckModel().clearChecks();
+        this.checkComboBox.getItems().clear();
+
+        for (Attribute attribute : table.getAttributes())
+        {
+            this.checkComboBox.getItems().add(attribute.getName());
+        }
     }
 
     private void refresh()
@@ -72,17 +106,36 @@ public class TableViewModel implements Initializable
         TableDto table = this.getTable();
         if (table == null)
         {
-            System.out.println("Error while getting table.");
+            StageUtils.openErrorDialog("Error occurred while getting table.");
             return;
         }
 
+        this.updateCheckComboBox(table);
         this.updateTableView(table);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        ObservableList<String> checkedItems = checkComboBox.getCheckModel().getCheckedItems();
+        checkedItems.addListener((ListChangeListener<? super String>) observable ->
+        {
+            performTableProjection(checkedItems);
+        });
+
         refresh();
+    }
+
+    private void performTableProjection(List<String> checkedItems)
+    {
+        TableDto table = (checkedItems.size() > 0) ? this.getTableProjection(checkedItems) : this.getTable();
+        if (table == null)
+        {
+            StageUtils.openErrorDialog("Error occurred while getting table projection.");
+            return;
+        }
+
+        this.updateTableView(table);
     }
 
     public void refresh(ActionEvent actionEvent)

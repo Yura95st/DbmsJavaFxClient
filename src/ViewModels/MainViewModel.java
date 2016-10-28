@@ -51,7 +51,7 @@ public class MainViewModel implements Initializable
         List<String> dbNamesList = this.getDbNamesList();
         if (dbNamesList == null)
         {
-            System.out.println("Error while getting databases names.");
+            StageUtils.openErrorDialog("Error occurred while getting databases names.");
             return;
         }
 

@@ -4,6 +4,7 @@ package Utils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -39,5 +40,15 @@ public class StageUtils
         {
             e.printStackTrace();
         }
+    }
+
+    public static void openErrorDialog(String text)
+    {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+
+        alert.showAndWait();
     }
 }
